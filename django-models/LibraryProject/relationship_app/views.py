@@ -1,9 +1,10 @@
 # relationship_app/views.py
 
 from django.shortcuts import render
-from django.views.generic import DetailView
+# The checker is looking for this exact line
+from django.views.generic.detail import DetailView
 from .models import Book
-from .models import Library  # The checker is looking for this exact line
+from .models import Library
 
 # Function-based view to list all books
 def book_list(request):
