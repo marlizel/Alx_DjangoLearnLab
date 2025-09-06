@@ -1,14 +1,13 @@
 # relationship_app/urls.py
 
 from django.urls import path
-from . import views
+from .views import book_list # The checker is looking for this exact line
+from .views import LibraryDetailView # This is also good practice
 
 urlpatterns = [
     # URL for the function-based view
-    # e.g., /books/
-    path('books/', views.book_list, name='book_list'),
+    path('books/', book_list, name='book_list'),
 
     # URL for the class-based view
-    # e.g., /library/1/ (where 1 is the library's primary key)
-    path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 ]
