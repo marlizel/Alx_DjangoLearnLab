@@ -7,7 +7,7 @@ from .models import Book
 from .models import Library
 
 # Function-based view to list all books
-def book_list(request):
+def list_books(request):
     """
     Renders a list of all books from the database.
     """
