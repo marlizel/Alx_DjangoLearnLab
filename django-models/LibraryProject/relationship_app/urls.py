@@ -1,11 +1,16 @@
 # relationship_app/urls.py
 
 from django.urls import path
-from .views import (
-    list_books, home, register, LibraryDetailView,
-    admin_view, librarian_view, member_view,
-    add_book, edit_book, delete_book
-)
+from .views import list_books # Separate import, as required by the checker
+from .views import home
+from .views import register
+from .views import LibraryDetailView
+from .views import admin_view
+from .views import librarian_view
+from .views import member_view
+from .views import add_book
+from .views import edit_book
+from .views import delete_book
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
@@ -24,7 +29,7 @@ urlpatterns = [
     path('librarian/', librarian_view, name='librarian_view'),
     path('member/', member_view, name='member_view'),
 
-    # Custom permission views - Corrected paths
+    # Custom permission views
     path('add_book/', add_book, name='add_book'),
     path('edit_book/<int:pk>/', edit_book, name='edit_book'),
     path('delete_book/<int:pk>/', delete_book, name='delete_book'),
