@@ -20,3 +20,14 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+# LibraryProject/urls.py
+
+from django.contrib import admin
+from django.urls import path, include # ADD 'include' HERE
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # Include the URLs from your new app
+    path('', include('relationship_app.urls')), # ADD THIS LINE
+]

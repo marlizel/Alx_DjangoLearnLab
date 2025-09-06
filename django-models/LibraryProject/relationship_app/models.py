@@ -13,6 +13,7 @@ class Book(models.Model):
     # One Author can have many Books.
     # If the Author is deleted, all their Books are also deleted (CASCADE).
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    publication_year = models.IntegerField(default=2023)
 
     def __str__(self):
         return self.title
