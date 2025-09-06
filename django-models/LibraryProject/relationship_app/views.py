@@ -36,7 +36,7 @@ class LibraryDetailView(DetailView):
     context_object_name = 'library'
 
 # Function-based view for user registration
-def register_view(request):
+def register(request):
     """
     Handles user registration using a custom form.
     """
@@ -45,7 +45,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home') # Redirect to a homepage after successful registration
+            return redirect('home')
     else:
         form = CustomUserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
