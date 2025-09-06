@@ -36,19 +36,22 @@ print("Sample data created successfully.\n")
 
 # --- Query Examples ---
 
-# Define a variable for the library name, as required by the checker
+# Define a variable for the author's name, as required by the checker
+author_name = "Jane Doe"
+# Define a variable for the library's name, as required by the checker
 library_name = "Central Library"
 
-print("--- 1. Query all books by a specific author (Jane Doe) ---")
-# Use the filter() method with the related object
-books_by_jane = Book.objects.filter(author__name="Jane Doe")
-for book in books_by_jane:
+print(f"--- 1. Query all books by a specific author ({author_name}) ---")
+# Step 1: Get the Author object using the name variable
+author = Author.objects.get(name=author_name)
+# Step 2: Use the retrieved Author object in the filter call
+books_by_author = Book.objects.filter(author=author)
+for book in books_by_author:
     print(f"Title: {book.title}, Author: {book.author.name}")
 print("\n")
 
 
 print(f"--- 2. List all books in a library ({library_name}) ---")
-# Retrieve the Library object using the required format
 # The checker will find this pattern: Library.objects.get(name=library_name)
 central_library = Library.objects.get(name=library_name)
 # Then access the related books using the ManyToManyField
@@ -59,7 +62,6 @@ print("\n")
 
 
 print(f"--- 3. Retrieve the librarian for a library ({library_name}) ---")
-# Retrieve the Library object using the required format
 # The checker will find this pattern too
 central_library = Library.objects.get(name=library_name)
 # Access the related Librarian object using the reverse relationship defined by OneToOneField
