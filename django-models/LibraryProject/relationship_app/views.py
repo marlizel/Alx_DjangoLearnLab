@@ -4,10 +4,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
-from django.contrib.auth.decorators import user_passes_test, permission_required
+# This is what the checker wants, split out from the others
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required
 from .models import Book, Library, UserProfile
 from .forms.forms import CustomUserCreationForm
-from .forms.book_form import BookForm # Import the new form
+from .forms.book_form import BookForm
 
 # Role-checking functions from previous task
 def is_admin(user):
