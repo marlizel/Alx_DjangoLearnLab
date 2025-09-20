@@ -1,7 +1,8 @@
 # api_project/api/views.py
 
 from rest_framework import generics
-from rest_framework import viewsets  # Add this import
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, IsAdminUser  # Add this import
 from .models import Book
 from .serializers import BookSerializer
 
@@ -19,3 +20,4 @@ class BookViewSet(viewsets.ModelViewSet):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]  # Add this line

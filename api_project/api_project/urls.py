@@ -1,5 +1,5 @@
 # api_project/api_project/urls.py
-
+    
 """
 URL configuration for api_project project.
 
@@ -17,9 +17,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include  # <-- You need to add 'include' here
+from django.urls import path, include
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),  # <-- And add this line
+    path('api/', include('api.urls')),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
