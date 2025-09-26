@@ -3,10 +3,8 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.filters import SearchFilter, OrderingFilter
-# This is the import the checker is looking for.
-from django_filters import rest_framework
-
+from rest_framework import filters  # Import the filters module
+from django_filters import rest_framework as django_filters
 from .models import Book
 from .serializers import BookSerializer
 
@@ -33,7 +31,7 @@ class BookListView(generics.ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     # Use the rest_framework from the new import
-    filter_backends = [rest_framework.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [django_filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
     # Define fields for filtering
     filterset_fields = ['title', 'author', 'publication_year']
