@@ -21,12 +21,20 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
-# advanced-api-project/advanced-api-project/urls.py
+# advanced-api-project/api/urls.py
 
-from django.contrib import admin
-from django.urls import path, include  # Make sure 'include' is here
+from django.urls import path
+from .views import BookListView, BookDetailView, BookCreateView, BookUpdateView, BookDeleteView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),  # Add this line
+    # URL for listing books
+    path('books/', BookListView.as_view(), name='book-list'),
+    
+    # URL for creating a new book
+    path('books/create/', BookCreateView.as_view(), name='book-create'),
+    
+    # URLs for retrieving, updating, and deleting a single book
+    path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),
+    path('books/<int:pk>/update/', BookUpdateView.as_view(), name='book-update'),
+    path('books/<int:pk>/delete/', BookDeleteView.as_view(), name='book-delete'),
 ]
