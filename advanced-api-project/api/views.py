@@ -2,18 +2,45 @@
 
 from django.shortcuts import render
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import permissions
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book
 from .serializers import BookSerializer
 
 # This view is for retrieving all books.
 class BookListView(generics.ListAPIView):
     """
-    A generic view for listing all books.
+    A generic view for listing all books with filtering, searching, and ordering.
+
+    Filtering:
+    - You can filter by title, author, and publication_year.
+    - Example: /api/books/?title=The Lord of the Rings&publication_year=1954
+
+    Searching:
+    - You can perform a text search on the title and author fields.
+    - Example: /api/books/?search=Tolkien
+
+    Ordering:
+    - You can order the results by any field.
+    - Example: /api/books/?ordering=-publication_year (descending)
+    - Example: /api/books/?ordering=title (ascending)
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly] # Allows read-only access to unauthenticated users
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    # Add filter backends
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    # Define fields for filtering
+    filterset_fields = ['title', 'author', 'publication_year']
+
+    # Define fields for searching
+    search_fields = ['title', 'author']
+
+    # Define fields for ordering
+    ordering_fields = ['title', 'publication_year']
 
 # This view is for retrieving a single book by ID.
 class BookDetailView(generics.RetrieveAPIView):
@@ -22,7 +49,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly] # Allows read-only access to unauthenticated users
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 # This view is for creating a new book.
 class BookCreateView(generics.CreateAPIView):
@@ -32,7 +59,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated] # Only authenticated users can create
+    permission_classes = [permissions.IsAuthenticated]
 
 # This view is for updating an existing book.
 class BookUpdateView(generics.UpdateAPIView):
@@ -42,7 +69,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated] # Only authenticated users can update
+    permission_classes = [permissions.IsAuthenticated]
 
 # This view is for deleting a book.
 class BookDeleteView(generics.DestroyAPIView):
@@ -52,4 +79,4 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated] # Only authenticated users can delete
+    permission_classes = [permissions.IsAuthenticated]
