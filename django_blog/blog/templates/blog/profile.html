@@ -1,0 +1,32 @@
+{% extends "blog/base.html" %}
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+    <h1>User Profile: {{ user.username }}</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <h2>User Details</h2>
+        <p>Update your first name, last name, or email.</p>
+        {{ user_form.as_p }}
+
+        <hr>
+
+        <h2>Biography</h2>
+        <p>Tell us a little bit about yourself.</p>
+        {{ profile_form.as_p }}
+        
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p class="mt-4"><a href="{% url 'home' %}">Return Home</a></p>
+{% endblock %}

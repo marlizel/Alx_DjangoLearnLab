@@ -1,0 +1,16 @@
+{% extends "blog/base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1 class="text-3xl font-bold mb-4">Welcome to the Django Blog!</h1>
+    
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}. You are logged in.</p>
+        <p><a href="{% url 'profile' %}" class="text-blue-500 hover:underline">View/Edit Profile</a></p>
+        <p><a href="{% url 'logout' %}" class="text-red-500 hover:underline">Logout</a></p>
+    {% else %}
+        <p>You are not logged in.</p>
+        <p><a href="{% url 'login' %}" class="text-green-500 hover:underline">Login</a> or <a href="{% url 'register' %}" class="text-green-500 hover:underline">Register</a>.</p>
+    {% endif %}
+    
+{% endblock %}
