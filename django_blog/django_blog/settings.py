@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # --- Task 0 Required App ---
     'blog',
+    'taggit', # REQUIRED for tagging functionality (Task 4)
 ]
 
 MIDDLEWARE = [
@@ -125,10 +126,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Configure where Django should look for static files globally
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+# --- STATICFILES_DIRS REMOVED TO CLEAR WARNING ---
+# STATICFILES_DIRS was removed because it was pointing to a non-existent directory. 
+# Django will still find static files within app-specific 'static/' folders.
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -2,16 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from taggit.managers import TaggableManager # <-- NEW IMPORT
 
-# --- Blog Post Model (Existing) ---
+# --- Blog Post Model (Updated for Tagging) ---
 class Post(models.Model):
     """
     Model representing a blog post.
     """
     title = models.CharField(max_length=200)
     content = models.TextField()
-    published_date = models.DateTimeField(auto_now_add=True)
+    # It's better practice to use 'created_on' or 'published_date' consistently, 
+    # but we maintain 'published_date' as per your original file.
+    published_date = models.DateTimeField(auto_now_add=True) 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # --- TAGGING FIELD ADDED ---
+    tags = TaggableManager() 
 
     def __str__(self):
         return self.title
@@ -41,7 +47,7 @@ def save_user_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
 
-# --- NEW: Comment Model ---
+# --- Comment Model (Existing) ---
 class Comment(models.Model):
     """
     Model representing a comment on a blog post.

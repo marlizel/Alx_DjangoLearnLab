@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm # <-- ADDED IMPORT
 from django.contrib.auth.models import User
 # Ensure Post, Profile, AND Comment are imported here for Task 3
 from .models import Profile, Post, Comment 
@@ -58,17 +58,19 @@ class ProfileBioForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 4}), # Use a larger input box for bio
         }
 
-# --- Task 2: Blog Post Form ---
+# --- Task 2 & 4: Blog Post Form (Updated for Tagging) ---
 class PostForm(forms.ModelForm):
     """
     Form for creating and updating blog posts.
     """
     class Meta:
         model = Post
-        fields = ['title', 'content'] # Author is set automatically in the view.
+        # ADDED 'tags' here for django-taggit functionality
+        fields = ['title', 'content', 'tags'] 
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'border p-2 w-full', 'placeholder': 'Title'}),
-            'content': forms.Textarea(attrs={'class': 'border p-2 w-full', 'rows': 10, 'placeholder': 'Write your post content here...'}),
+            # Updated classes for better front-end look
+            'title': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'placeholder': 'Post Title'}),
+            'content': forms.Textarea(attrs={'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'rows': 15, 'placeholder': 'Write your content here...'}),
         }
 
 # --- Task 3: Comment Form ---

@@ -28,8 +28,15 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
 
-    # --- NEW: Comment CRUD URLs (Task 3) ---
-    # REQUIRED BY CHECKER: post/<int:pk>/comments/new/ 
+    # --- NEW TAGGING and SEARCH URLs (Task 4) ---
+    # 1. View posts filtered by a specific tag slug, handled by PostListView
+    path('tags/<slug:tag_slug>/', PostListView.as_view(), name='posts_by_tag'), 
+    
+    # 2. Search path, handled by the function-based view views.post_search
+    path('search/', views.post_search, name='post_search'), 
+
+    # --- Comment CRUD URLs (Task 3) ---
+    # Create new comment (required checker path: post/<int:pk>/comments/new/)
     path('post/<int:pk>/comments/new/', CommentCreateView.as_view(), name='comment_create'),
     
     # Update existing comment by its primary key (pk)
