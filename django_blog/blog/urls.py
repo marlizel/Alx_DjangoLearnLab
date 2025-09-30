@@ -1,7 +1,16 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
+from .views import (
+    PostListView, 
+    PostDetailView, 
+    PostCreateView, 
+    PostUpdateView, 
+    PostDeleteView,
+    # --- NEW: Import Comment Views for Task 3 ---
+    CommentUpdateView,
+    CommentDeleteView
+)
 
 urlpatterns = [
     # --- Authentication URLs (Task 1) ---
@@ -11,20 +20,17 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('profile/', views.profile, name='profile'),
     
-    # --- Blog Post CRUD URLs (Task 2 - Adjusted for Checker) ---
-    
-    # List all posts (Plural is fine here)
+    # --- Blog Post CRUD URLs (Task 2) ---
     path('posts/', PostListView.as_view(), name='posts'),
-    
-    # Create new post (Checker required: post/new/)
     path('post/new/', PostCreateView.as_view(), name='post_create'),
-    
-    # Detail view of a single post
     path('posts/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
-    
-    # Update existing post (Checker required: post/<int:pk>/update/)
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
-    
-    # Delete existing post (Checker required: post/<int:pk>/delete/)
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
+
+    # --- NEW: Comment CRUD URLs (Task 3) ---
+    # Update existing comment by its primary key (pk)
+    path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment_update'),
+    
+    # Delete existing comment by its primary key (pk)
+    path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment_delete'),
 ]

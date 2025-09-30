@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-# Ensure Post is imported here for Task 2
-from .models import Profile, Post 
+# Ensure Post, Profile, AND Comment are imported here for Task 3
+from .models import Profile, Post, Comment 
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -70,3 +70,17 @@ class PostForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'border p-2 w-full', 'placeholder': 'Title'}),
             'content': forms.Textarea(attrs={'class': 'border p-2 w-full', 'rows': 10, 'placeholder': 'Write your post content here...'}),
         }
+
+# --- Task 3: Comment Form ---
+class CommentForm(forms.ModelForm):
+    """
+    Form for creating new comments on a post.
+    """
+    # Use a TextArea widget for the content field
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}))
+
+    class Meta:
+        model = Comment
+        # Only the content needs to be exposed to the user, 
+        # as 'author' and 'post' are set in the view.
+        fields = ['content']
