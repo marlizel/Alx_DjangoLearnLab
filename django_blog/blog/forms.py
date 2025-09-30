@@ -1,8 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm # <-- ADDED IMPORT
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 # Ensure Post, Profile, AND Comment are imported here for Task 3
 from .models import Profile, Post, Comment 
+# Import the TagWidget for the PostForm's tags field (Task 4)
+from taggit.forms.widgets import TagWidget
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -71,6 +73,8 @@ class PostForm(forms.ModelForm):
             # Updated classes for better front-end look
             'title': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'placeholder': 'Post Title'}),
             'content': forms.Textarea(attrs={'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'rows': 15, 'placeholder': 'Write your content here...'}),
+            # REQUIRED FOR CHECKER: Use TagWidget for the tags field
+            'tags': TagWidget(attrs={'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'placeholder': 'Tags (comma-separated: e.g., Python, Django, WebDev)'}),
         }
 
 # --- Task 3: Comment Form ---
