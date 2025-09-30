@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
+# Ensure Post is imported here for Task 2
+from .models import Profile, Post 
+
 
 class CustomUserCreationForm(UserCreationForm):
     """
@@ -25,6 +27,7 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
 
 class UserProfileForm(forms.ModelForm):
     """
@@ -53,4 +56,17 @@ class ProfileBioForm(forms.ModelForm):
         fields = ('bio',)
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4}), # Use a larger input box for bio
+        }
+
+# --- Task 2: Blog Post Form ---
+class PostForm(forms.ModelForm):
+    """
+    Form for creating and updating blog posts.
+    """
+    class Meta:
+        model = Post
+        fields = ['title', 'content'] # Author is set automatically in the view.
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'border p-2 w-full', 'placeholder': 'Title'}),
+            'content': forms.Textarea(attrs={'class': 'border p-2 w-full', 'rows': 10, 'placeholder': 'Write your post content here...'}),
         }

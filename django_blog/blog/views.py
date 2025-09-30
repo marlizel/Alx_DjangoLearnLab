@@ -8,6 +8,11 @@ from django.db import transaction
 from .forms import CustomUserCreationForm, UserProfileForm, ProfileBioForm
 from .models import Post, Profile
 
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
+
 # --- Home View ---
 def home(request):
     """
@@ -71,3 +76,73 @@ def profile(request):
         "user_form": user_form,
         "profile_form": profile_form
     })
+
+class PostListView(ListView):
+    """
+    Displays a list of all blog posts. Accessible to all users.
+    """
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+
+class PostDetailView(DetailView):
+    """
+    Displays the full content of a single blog post. Accessible to all users.
+    """
+    model = Post
+    template_name = 'blog/post_detail.html'
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    """
+    Allows authenticated users to create a new post.
+    Requires LoginRequiredMixin.
+    """
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+    success_url = reverse_lazy('posts') # Redirect to the post list upon success
+
+    def form_valid(self, form):
+        """
+        Overrides form_valid to automatically set the author to the logged-in user.
+        """
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    Allows the post author to update their own post.
+    Requires LoginRequiredMixin (authenticated) and UserPassesTestMixin (author check).
+    """
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def test_func(self):
+        """
+        Checks if the current user is the author of the post.
+        """
+        post = self.get_object()
+        return self.request.user == post.author
+
+    def get_success_url(self):
+        """
+        Redirects to the detailed view of the updated post.
+        """
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.pk})
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """
+    Allows the post author to delete their own post.
+    Requires LoginRequiredMixin (authenticated) and UserPassesTestMixin (author check).
+    """
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = reverse_lazy('posts') # Redirect to the post list after deletion
+
+    def test_func(self):
+        """
+        Checks if the current user is the author of the post.
+        """
+        post = self.get_object()
+        return self.request.user == post.author

@@ -1,0 +1,31 @@
+{% extends "blog/base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <article class="bg-white p-8 rounded-lg shadow-xl">
+        <h1 class="text-4xl font-extrabold mb-3 text-gray-900">{{ post.title }}</h1>
+        <p class="text-sm text-gray-600 mb-6 border-b pb-2">
+            By <span class="font-medium text-blue-600">{{ post.author.username }}</span> 
+            on {{ post.published_date|date:"F j, Y, P" }}
+        </p>
+        
+        <div class="prose max-w-none text-gray-800 leading-relaxed space-y-4">
+            {{ post.content|linebreaksbr }}
+        </div>
+
+        {% if user.is_authenticated and user == post.author %}
+            <div class="mt-8 pt-4 border-t flex space-x-4">
+                <a href="{% url 'post_update' pk=post.pk %}" class="text-white bg-green-500 hover:bg-green-600 py-2 px-4 rounded-lg shadow-md transition duration-150">Edit Post</a>
+                <a href="{% url 'post_delete' pk=post.pk %}" class="text-white bg-red-500 hover:bg-red-600 py-2 px-4 rounded-lg shadow-md transition duration-150">Delete Post</a>
+            </div>
+        {% endif %}
+    </article>
+
+    <p class="mt-8"><a href="{% url 'posts' %}" class="text-blue-500 hover:underline">&larr; Back to all posts</a></p>
+    
+    <!-- Placeholder for Comment Section (Task 3) -->
+    <section class="mt-10 p-6 bg-gray-50 rounded-lg shadow-inner">
+        <h2 class="text-2xl font-bold mb-4">Comments</h2>
+        <p class="text-gray-500">Comment functionality will be added in a future task.</p>
+    </section>
+{% endblock %}
