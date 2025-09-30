@@ -8,6 +8,7 @@ from .views import (
     PostUpdateView, 
     PostDeleteView,
     # --- NEW: Import Comment Views for Task 3 ---
+    CommentCreateView,  # <-- ADDED THIS IMPORT
     CommentUpdateView,
     CommentDeleteView
 )
@@ -28,6 +29,9 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
 
     # --- NEW: Comment CRUD URLs (Task 3) ---
+    # Create new comment on a specific post (uses post's pk)
+    path('posts/<int:pk>/comment/create/', CommentCreateView.as_view(), name='comment_create'),
+    
     # Update existing comment by its primary key (pk)
     path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment_update'),
     

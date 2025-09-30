@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
@@ -6,7 +6,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.db import transaction
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView # Import all generic edit views
 
 # --- CORRECTED IMPORTS ---
 # Include PostForm and CommentForm from .forms:
@@ -49,10 +50,11 @@ def profile(request):
     """
     Allows the logged-in user to view and edit their profile and user details.
     """
+    # Use request.user.profile to get the profile object
     try:
         user_profile = request.user.profile
     except Profile.DoesNotExist:
-        # Should not happen if signals are working, but here for robustness
+        # Fallback for robustness
         user_profile = Profile.objects.create(user=request.user)
     
     if request.method == "POST":
@@ -84,11 +86,11 @@ class PostListView(ListView):
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
 
-# --- UPDATED for Comment Creation (Task 3) ---
+# --- UPDATED PostDetailView (Removes the manual comment POST handling) ---
 class PostDetailView(DetailView):
     """
-    Displays the full content of a single blog post and handles comment creation (POST).
-    Accessible to all users.
+    Displays the full content of a single blog post.
+    The comment form POST is now handled by CommentCreateView.
     """
     model = Post
     template_name = 'blog/post_detail.html'
@@ -100,51 +102,52 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         # Add the comment form, only if the user is authenticated
         if self.request.user.is_authenticated:
-            # Pass an empty form instance for GET request display
+            # Pass an empty form instance for display
             context['comment_form'] = CommentForm() 
         
-        # Fetch comments ordered by creation time
+        # Fetch comments ordered by creation time (default ordering is set on the model)
         context['comments'] = self.object.comments.all()
         return context
+    
+    # NOTE: The manual 'post' method for comment creation has been removed here.
+    # The comment form now submits to CommentCreateView via the 'comment_create' URL.
 
-    def post(self, request, *args, **kwargs):
-        """
-        Handles the submission of a new comment form (POST request).
-        """
-        # Fetch the Post object that the comment is for
-        self.object = self.get_object() 
+# --- NEW COMMENT CREATE VIEW (Required for checker) ---
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    """
+    Handles the creation of a new Comment via POST request from the post detail page.
+    This view ensures the comment is linked to the correct post and author.
+    """
+    model = Comment
+    form_class = CommentForm
+    
+    def form_valid(self, form):
+        # 1. Retrieve the Post object using the 'pk' from the URL (passed via urls.py)
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
         
-        if not request.user.is_authenticated:
-            messages.error(request, "You must be logged in to post a comment.")
-            return redirect('post_detail', pk=self.object.pk)
+        # 2. Assign the Post and the currently logged-in user to the comment instance
+        form.instance.post = post
+        form.instance.author = self.request.user
+        
+        messages.success(self.request, "Your comment was posted successfully!")
+        
+        # 3. Save the comment and proceed
+        return super().form_valid(form)
 
-        comment_form = CommentForm(request.POST)
-        
-        if comment_form.is_valid():
-            # Create comment instance but don't save yet
-            comment = comment_form.save(commit=False)
-            comment.post = self.object
-            comment.author = request.user
-            comment.save()
-            messages.success(request, "Your comment was posted successfully!")
-            # Redirect back to the post detail page
-            return redirect('post_detail', pk=self.object.pk)
-        
-        # If the form is invalid, re-render the page with errors
-        context = self.get_context_data()
-        context['comment_form'] = comment_form
-        return self.render_to_response(context)
+    def get_success_url(self):
+        # Redirect back to the post detail page after successful comment creation
+        post_pk = self.kwargs.get('pk')
+        return reverse_lazy('post_detail', kwargs={'pk': post_pk})
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     """
     Allows authenticated users to create a new post.
-    Requires LoginRequiredMixin.
     """
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
-    success_url = reverse_lazy('posts') # Redirect to the post list upon success
+    success_url = reverse_lazy('posts') 
 
     def form_valid(self, form):
         """
@@ -156,7 +159,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     Allows the post author to update their own post.
-    Requires LoginRequiredMixin (authenticated) and UserPassesTestMixin (author check).
     """
     model = Post
     form_class = PostForm
@@ -178,11 +180,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     Allows the post author to delete their own post.
-    Requires LoginRequiredMixin (authenticated) and UserPassesTestMixin (author check).
     """
     model = Post
     template_name = 'blog/post_confirm_delete.html'
-    success_url = reverse_lazy('posts') # Redirect to the post list after deletion
+    success_url = reverse_lazy('posts') 
 
     def test_func(self):
         """
@@ -191,7 +192,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author
 
-# --- NEW COMMENT VIEWS (Task 3) ---
+# --- COMMENT UPDATE AND DELETE VIEWS (Already provided by user, cleaned up for final placement) ---
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
