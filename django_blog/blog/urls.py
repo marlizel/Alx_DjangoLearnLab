@@ -7,7 +7,9 @@ from .views import (
     PostCreateView, 
     PostUpdateView, 
     PostDeleteView,
-    # --- NEW: Import Comment Views for Task 3 ---
+    # --- NEW: Import PostByTagListView for Task 4 ---
+    PostByTagListView,
+    # --- Import Comment Views for Task 3 ---
     CommentCreateView,
     CommentUpdateView,
     CommentDeleteView
@@ -28,11 +30,11 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
 
-    # --- NEW TAGGING and SEARCH URLs (Task 4) ---
-    # 1. View posts filtered by a specific tag slug, handled by PostListView
-    path('tags/<slug:tag_slug>/', PostListView.as_view(), name='posts_by_tag'), 
+    # --- TAGGING and SEARCH URLs (Task 4) ---
+    # 1. View posts filtered by a specific tag slug, using PostByTagListView.as_view()
+    path('tags/<slug:tag_slug>/', PostByTagListView.as_view(), name='posts_by_tag'), 
     
-    # 2. Search path, handled by the function-based view views.post_search
+    # 2. Search path
     path('search/', views.post_search, name='post_search'), 
 
     # --- Comment CRUD URLs (Task 3) ---
