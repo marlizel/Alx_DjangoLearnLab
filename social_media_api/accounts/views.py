@@ -34,3 +34,45 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        """
+        Follow the user with id=user_id.
+        """
+        target = get_object_or_404(User, pk=user_id)
+        # Prevent following yourself
+        if target == request.user:
+            return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Use the reverse relation 'following' (provided by your followers field's related_name)
+        # Add target to the current user's 'following' set
+        request.user.following.add(target)
+        return Response({'detail': f'Now following user {target.username}.'}, status=status.HTTP_200_OK)
+
+
+class UnfollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        """
+        Unfollow the user with id=user_id.
+        """
+        target = get_object_or_404(User, pk=user_id)
+        if target == request.user:
+            return Response({'detail': 'You cannot unfollow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.following.remove(target)
+        return Response({'detail': f'Unfollowed user {target.username}.'}, status=status.HTTP_200_OK)
