@@ -1,0 +1,36 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<div class="max-w-xl mx-auto p-4 md:p-8">
+<div class="bg-white p-6 rounded-xl shadow-lg">
+<h1 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">Edit Your Comment</h1>
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Contextual information -->
+        <p class="text-sm text-gray-500 mb-4">
+            Editing comment for post: 
+            <span class="font-semibold text-indigo-600">{{ comment.post.title }}</span>
+        </p>
+
+        {% for field in form %}
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="text-red-500 text-xs italic">{{ field.errors }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div class="flex justify-end space-x-4 pt-4">
+            <a href="{% url 'post_detail' comment.post.pk %}" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition duration-150">Cancel</a>
+            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-150">Update Comment</button>
+        </div>
+    </form>
+</div>
+
+</div>
+{% endblock content %}
