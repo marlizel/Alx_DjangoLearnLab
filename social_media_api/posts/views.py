@@ -43,13 +43,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         # Create notification for post author about the new comment
         try:
             # import here to avoid circular import at top-level
-            from notification.models import Notification
-            Notification.objects.create(
+            from notifications.utils import create_notification
+            create_notification(
                 recipient=comment.post.author,
                 actor=self.request.user,
                 verb='commented on',
-                target_content_type=ContentType.objects.get_for_model(comment.post),
-                target_object_id=comment.post.id
+                target=comment.post
             )
         except Exception:
             # don't break API if the notification app not ready
@@ -84,13 +83,12 @@ class LikePostView(APIView):
 
         # create notification for post owner
         try:
-            from notification.models import Notification
-            Notification.objects.create(
+            from notifications.utils import create_notification
+            create_notification(
                 recipient=post.author,
                 actor=request.user,
                 verb='liked',
-                target_content_type=ContentType.objects.get_for_model(post),
-                target_object_id=post.id
+                target=post
             )
         except Exception:
             pass
