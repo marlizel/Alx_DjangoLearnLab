@@ -21,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ------------------------------------------------
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-qw7@auo#vd+z@0$vn191@(a=s)2kh*zc9x_ttmh-cvhnnceqz9')
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = False
+
 
 # For Heroku or other production hosts
 ALLOWED_HOSTS = ['*']
