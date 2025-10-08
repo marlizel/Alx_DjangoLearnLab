@@ -157,3 +157,6 @@ SITE_ID = 1
 # DEFAULT AUTO FIELD
 # ------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PORT = 8000
+
